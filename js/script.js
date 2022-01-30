@@ -19,38 +19,25 @@ let user = {
 };
 
 function deepFreeze ( obj ) {
-    Object.keys(obj).forEach(property => {
-      if (typeof obj[property] === 'object' && !Object.isFrozen(obj[property])) 
-      deepFreeze(obj[property]);
-    });
-    return Object.freeze(obj);
-  };
-
-deepFreeze(user);
- 
-console.log( Object.getOwnPropertyDescriptors(user));
-console.log( Object.getOwnPropertyDescriptors(user.data));
-console.log( Object.getOwnPropertyDescriptors(user.data.d));
-console.log( Object.getOwnPropertyDescriptors(user.data.d.d1));
-
-
-
-// Второй вариант перебора
-
-//   function deepFreeze ( obj ) {
-//     for(let key in obj){
+    for(let key in obj){
     
-//             if (typeof obj[key] === 'object' && !Object.isFrozen(obj[key])) 
-//             deepFreeze(obj[key]);
-//           };
+            if (typeof obj[key] === 'object') 
+            deepFreeze(obj[key]);
+        
+            Object.defineProperty(obj, `${key}`, {
+                writable: false, 
+                enumerable: false,
+                configurable: false
+                }
+            );
+    };
+    return obj;
+};
 
-//           return Object.freeze(obj);
-//     }
 
-
-//   deepFreeze(user);
+  deepFreeze(user);
  
-//   console.log( Object.getOwnPropertyDescriptors(user));
-//   console.log( Object.getOwnPropertyDescriptors(user.data));
-//   console.log( Object.getOwnPropertyDescriptors(user.data.d));
-//   console.log( Object.getOwnPropertyDescriptors(user.data.d.d1));
+  console.log( Object.getOwnPropertyDescriptors(user));
+  console.log( Object.getOwnPropertyDescriptors(user.data));
+  console.log( Object.getOwnPropertyDescriptors(user.data.d));
+  console.log( Object.getOwnPropertyDescriptors(user.data.d.d1));
